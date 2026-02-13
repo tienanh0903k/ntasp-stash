@@ -19,6 +19,7 @@ Think of it as **"git stash" but global and project-independent**.
 - **List** all saved snippets with timestamps
 - **Show** full content of saved snippets
 - **Restore** snippets to working directory
+- **Apply** snippets to existing files (overwrite)
 - **Delete** unwanted snippets
 - **Diff** saved version vs current file (with colors)
 
@@ -61,6 +62,15 @@ ntasp show 1
 ntasp restore 1
 ntasp restore 1 app-backup.js
 ```
+
+### Apply snippet to existing file
+
+```bash
+ntasp apply 1
+ntasp apply 1 app.js
+```
+
+Note: `apply` overwrites existing files, while `restore` creates new files.
 
 ### Compare with current file
 
@@ -131,6 +141,7 @@ All snippets are stored in:
 - [x] list
 - [x] show
 - [x] restore
+- [x] apply
 - [x] delete
 - [x] diff
 
