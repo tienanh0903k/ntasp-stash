@@ -25,7 +25,7 @@ function showHelp() {
   console.log(chalk.cyan('  restore <id> [name] ') + 'Restore snippet to working directory');
   console.log(chalk.cyan('  apply <id> [file]   ') + 'Apply snippet to existing file (overwrite)');
   console.log(chalk.cyan('  delete <id>         ') + 'Delete a snippet');
-  console.log(chalk.cyan('  diff <id> [file]    ') + 'Compare snippet with current file');
+  console.log(chalk.cyan('  diff <id> [file] [--console|--ide]') + '\n                      ' + 'Compare snippet with current file in IDE');
   console.log(chalk.cyan('  help                ') + 'Show this help message\n');
   console.log(chalk.bold('Examples:'));
   console.log(chalk.gray('  ntasp save app.js'));
@@ -37,6 +37,7 @@ function showHelp() {
   console.log(chalk.gray('  ntasp apply 1 app.js'));
   console.log(chalk.gray('  ntasp diff 1'));
   console.log(chalk.gray('  ntasp diff 1 app.js'));
+  console.log(chalk.gray('  ntasp diff 1 --console'));
   console.log(chalk.gray('  ntasp delete 1\n'));
 }
 
@@ -65,7 +66,15 @@ switch (command) {
     deleteSnippet(args[1]);
     break;
   case 'diff':
-    diff(args[1], args[2]);
+    {
+      const diffArgs = args.slice(1);
+      const options = {
+        forceConsole: diffArgs.includes('--console'),
+        forceIDE: diffArgs.includes('--ide')
+      };
+      const cleanArgs = diffArgs.filter(arg => !arg.startsWith('--'));
+      diff(cleanArgs[0], cleanArgs[1], options);
+    }
     break;
   default:
     console.error(chalk.red(`Unknown command: ${command}`));

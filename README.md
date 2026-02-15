@@ -21,7 +21,7 @@ Think of it as **"git stash" but global and project-independent**.
 - **Restore** snippets to working directory
 - **Apply** snippets to existing files (overwrite)
 - **Delete** unwanted snippets
-- **Diff** saved version vs current file (with colors)
+- **Diff** saved version vs current file (opens in IDE like Git changes)
 
 ## Installation
 
@@ -74,10 +74,26 @@ Note: `apply` overwrites existing files, while `restore` creates new files.
 
 ### Compare with current file
 
+Opens diff view directly in IDE (like Git changes):
+
 ```bash
 ntasp diff 1
 ntasp diff 1 app.js
 ```
+
+Supported IDEs (auto-detected):
+- VS Code
+- IntelliJ IDEA
+- WebStorm
+- Sublime Text
+
+Force console output:
+
+```bash
+ntasp diff 1 --console
+```
+
+Note: By default, `diff` will try to open your IDE. If no IDE is detected, it will fallback to console output.
 
 ### Delete snippet
 
@@ -129,13 +145,14 @@ All snippets are stored in:
 
 - **No git required** - Works anywhere
 - **Global** - Access from any project
+- **IDE Integration** - Diff view opens directly in your editor
 - **Simple** - File-based, no database
 - **Fast** - Instant save and restore
 - **Cross-platform** - Mac, Linux, Windows
 
 ## Roadmap
 
-### Current (v1.0 - MVP)
+### Current (v1.0)
 
 - [x] save
 - [x] list
@@ -144,16 +161,21 @@ All snippets are stored in:
 - [x] apply
 - [x] delete
 - [x] diff
+- [x] IDE integration (VS Code, IntelliJ, WebStorm, Sublime)
 
-### Future
+### Future (v1.1+)
 
 - [ ] Full-text search
 - [ ] Tag system
+- [ ] Edit snippet
+- [ ] Rename snippet
+- [ ] Notes/descriptions
 - [ ] Encryption mode
 - [ ] Cloud sync
 - [ ] Export/import
 - [ ] Random string IDs
 - [ ] Git branch awareness
+- [ ] History/versions
 
 ## Technical Stack
 
