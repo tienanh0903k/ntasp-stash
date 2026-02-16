@@ -82,10 +82,20 @@ ntasp diff 1 app.js
 ```
 
 Supported IDEs (auto-detected):
+- Cursor
+- Windsurf
 - VS Code
+- VSCodium
+- VS Code Insiders
 - IntelliJ IDEA
 - WebStorm
 - Sublime Text
+- Zed
+
+**Smart detection**: Automatically detects your current IDE and prioritizes it:
+- Detects IDE from terminal environment variables
+- Prioritizes current IDE over system-wide installations
+- Falls back to console diff if no IDE is available
 
 Force console output:
 
@@ -103,6 +113,8 @@ ntasp delete 1
 
 ## How it works
 
+### Storage
+
 All snippets are stored in:
 
 ```
@@ -112,6 +124,21 @@ All snippets are stored in:
   2.json
   ...
 ```
+
+### IDE Detection
+
+When you run `ntasp diff`, the tool:
+
+1. **Checks current IDE** - Detects which IDE terminal you're running from (via environment variables like `TERM_PROGRAM`, `VSCODE_GIT_IPC_HANDLE`)
+2. **Finds IDE command** - Locates the corresponding CLI command (e.g., `cursor`, `windsurf`, `code`)
+3. **Opens diff view** - Launches the diff in your current IDE, just like Git changes
+4. **Falls back gracefully** - If no IDE is detected, shows a colored console diff
+
+This means if you run `ntasp diff 1` from:
+- **Cursor terminal** → Opens in Cursor
+- **Windsurf terminal** → Opens in Windsurf
+- **VS Code terminal** → Opens in VS Code
+- **Regular terminal** → Shows console diff or opens first available IDE
 
 ## Data Structure
 
@@ -161,7 +188,7 @@ All snippets are stored in:
 - [x] apply
 - [x] delete
 - [x] diff
-- [x] IDE integration (VS Code, IntelliJ, WebStorm, Sublime)
+- [x] IDE integration with smart detection (Cursor, Windsurf, VS Code, IntelliJ, WebStorm, Sublime, Zed)
 
 ### Future (v1.1+)
 

@@ -6,12 +6,62 @@ const chalk = require('chalk');
 const { diffLines } = require('diff');
 const vault = require('../utils/vault');
 
+function detectCurrentIDE() {
+  const termProgram = process.env.TERM_PROGRAM;
+  const vsCodeIPC = process.env.VSCODE_GIT_IPC_HANDLE;
+  const vsCodeInjection = process.env.VSCODE_INJECTION;
+
+  if (termProgram === 'vscode' || vsCodeIPC || vsCodeInjection) {
+    const possibleCommands = ['cursor', 'windsurf', 'code', 'codium', 'code-insiders'];
+
+    for (const cmd of possibleCommands) {
+      try {
+        execSync(`which ${cmd}`, { stdio: 'ignore' });
+        const name = cmd === 'cursor' ? 'Cursor' :
+                    cmd === 'windsurf' ? 'Windsurf' :
+                    cmd === 'codium' ? 'VSCodium' :
+                    cmd === 'code-insiders' ? 'VS Code Insiders' : 'VS Code';
+        return { name, command: cmd, type: 'vscode' };
+      } catch (error) {
+        continue;
+      }
+    }
+  }
+
+  if (termProgram === 'iTerm.app' || termProgram === 'Apple_Terminal') {
+    const possibleCommands = ['cursor', 'windsurf', 'code', 'codium'];
+    for (const cmd of possibleCommands) {
+      try {
+        execSync(`which ${cmd}`, { stdio: 'ignore' });
+        const name = cmd === 'cursor' ? 'Cursor' :
+                    cmd === 'windsurf' ? 'Windsurf' :
+                    cmd === 'codium' ? 'VSCodium' : 'VS Code';
+        return { name, command: cmd, type: 'vscode' };
+      } catch (error) {
+        continue;
+      }
+    }
+  }
+
+  return null;
+}
+
 function detectIDE() {
+  const currentIDE = detectCurrentIDE();
+  if (currentIDE) {
+    return currentIDE;
+  }
+
   const ides = [
-    { name: 'VS Code', command: 'code', args: '--diff' },
-    { name: 'IntelliJ IDEA', command: 'idea', args: 'diff' },
-    { name: 'Sublime Text', command: 'subl', args: '--command' },
-    { name: 'WebStorm', command: 'webstorm', args: 'diff' },
+    { name: 'Cursor', command: 'cursor', type: 'vscode' },
+    { name: 'Windsurf', command: 'windsurf', type: 'vscode' },
+    { name: 'VS Code', command: 'code', type: 'vscode' },
+    { name: 'VSCodium', command: 'codium', type: 'vscode' },
+    { name: 'VS Code Insiders', command: 'code-insiders', type: 'vscode' },
+    { name: 'IntelliJ IDEA', command: 'idea', type: 'jetbrains' },
+    { name: 'WebStorm', command: 'webstorm', type: 'jetbrains' },
+    { name: 'Sublime Text', command: 'subl', type: 'sublime' },
+    { name: 'Zed', command: 'zed', type: 'zed' },
   ];
 
   for (const ide of ides) {
@@ -34,12 +84,14 @@ function openInIDE(snippetPath, currentPath, snippetName) {
   }
 
   try {
-    if (ide.command === 'code') {
-      execSync(`code --diff "${snippetPath}" "${currentPath}" --wait`, { stdio: 'ignore' });
-    } else if (ide.command === 'idea' || ide.command === 'webstorm') {
+    if (ide.type === 'vscode') {
+      execSync(`${ide.command} --diff "${snippetPath}" "${currentPath}" --wait`, { stdio: 'ignore' });
+    } else if (ide.type === 'jetbrains') {
       execSync(`${ide.command} diff "${snippetPath}" "${currentPath}"`, { stdio: 'ignore' });
-    } else if (ide.command === 'subl') {
+    } else if (ide.type === 'sublime') {
       execSync(`subl --command "sublimerge_diff_views {\\\"left_read_only\\\": true, \\\"left_file\\\": \\\"${snippetPath}\\\", \\\"right_file\\\": \\\"${currentPath}\\\"}"`, { stdio: 'ignore' });
+    } else if (ide.type === 'zed') {
+      execSync(`zed "${snippetPath}" "${currentPath}"`, { stdio: 'ignore' });
     }
     return { success: true, ide: ide.name };
   } catch (error) {
