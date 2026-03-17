@@ -128,25 +128,13 @@ function show(id) {
 
   console.log(chalk.bold(`\nSnippet #${snippet.id}: ${snippet.name}`));
   console.log(chalk.gray(`Created: ${new Date(snippet.createdAt).toLocaleString()}`));
-  console.log(chalk.gray('─'.repeat(50)));
-  console.log(snippet.content);
-  console.log(chalk.gray('─'.repeat(50)));
 
-  if (process.stdin.isTTY) {
-    console.log(chalk.gray('\nPress Enter to open in IDE, or Ctrl+C to exit'));
+  const opened = openInIDE(snippet);
 
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
-
-    rl.question('', () => {
-      rl.close();
-      const opened = openInIDE(snippet);
-      if (!opened) {
-        console.log(chalk.gray('\nContent displayed above'));
-      }
-    });
+  if (!opened) {
+    console.log(chalk.gray('─'.repeat(50)));
+    console.log(snippet.content);
+    console.log(chalk.gray('─'.repeat(50)));
   }
 }
 
