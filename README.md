@@ -16,7 +16,7 @@ Think of it as **"git stash" but global and project-independent**.
 ## Features
 
 - **Save** any file to a global vault
-- **List** all saved snippets with timestamps
+- **List** all saved snippets with timestamps (with interactive open)
 - **Show** full content of saved snippets
 - **Restore** snippets to working directory
 - **Apply** snippets to existing files (overwrite)
@@ -49,6 +49,8 @@ ntasp save app.js
 ```bash
 ntasp list
 ```
+
+After listing, you can enter a snippet ID to open it directly in your IDE (or view content if no IDE is detected).
 
 ### Show snippet content
 
